@@ -9,5 +9,8 @@
   },
   "scripts": {
     "start": "browser-sync start -c bs-config.js"
+  },
+  "dependencies": {
+    "lit-html": "^0.13.0"
   }
 }

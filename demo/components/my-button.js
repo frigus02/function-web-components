@@ -1,7 +1,10 @@
-import { makeWebComponent } from "/lib/functional-web-components.js";
+import { html } from "/lib/lit-html/lit-html.js";
+import { makeWebComponent, useState } from "/lib/functional-web-components.js";
 
 function myButton() {
-    return `
+    const [count, setCount] = useState(1);
+
+    return html`
         <style>
             button {
                 border: 1px solid black;
@@ -18,8 +21,8 @@ function myButton() {
                 background-color: #999;
             }
         </style>
-        <button>
-            <slot></slot>
+        <button @click="${() => setCount(count + 1)}">
+            <slot></slot> ${count}
         </button>
     `;
 }

@@ -1,3 +1,5 @@
+import { render as litRender } from "/lib/lit-html/lit-html.js";
+
 let currentStateStore = null;
 
 function useState(initialValue) {
@@ -53,7 +55,8 @@ function makeWebComponent(functionalComponent) {
         _render() {
             try {
                 currentStateStore = this._stateStore;
-                this.shadowRoot.innerHTML = functionalComponent(this._props);
+                const result = functionalComponent(this._props);
+                litRender(result, this.shadowRoot);
             } finally {
                 currentStateStore = null;
                 this._stateStore.firstRender = false;

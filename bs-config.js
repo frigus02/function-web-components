@@ -6,6 +6,7 @@ module.exports = {
     server: {
         baseDir: "demo",
         routes: {
+            "/lib/lit-html/": "node_modules/lit-html/",
             "/lib/functional-web-components.js": "index.js"
         }
     },
