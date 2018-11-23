@@ -24,7 +24,7 @@ function useState(initialValue) {
 }
 
 function createStateSetter(state, counter, onStateChange) {
-    return function(value) {
+    return function setState(value) {
         if (currentStateStore !== null) {
             throw new Error("Cannot set state during render.");
         }
@@ -38,13 +38,14 @@ function makeWebComponent(functionalComponent) {
     const webComponent = class extends HTMLElement {
         constructor() {
             super();
+            this._props = {};
             this._stateStore = {
                 firstRender: true,
                 counter: -1,
                 state: [],
                 onStateChange: this._render.bind(this)
             };
-            this._props = {};
+            this._renderRafHandle = undefined;
             this.attachShadow({ mode: "open" });
         }
 
@@ -52,16 +53,30 @@ function makeWebComponent(functionalComponent) {
             this._render();
         }
 
-        _render() {
-            try {
-                currentStateStore = this._stateStore;
-                const result = functionalComponent(this._props);
-                litRender(result, this.shadowRoot);
-            } finally {
-                currentStateStore = null;
-                this._stateStore.firstRender = false;
-                this._stateStore.counter = -1;
+        disconnectedCallback() {
+            if (this._renderRafHandle !== undefined) {
+                cancelAnimationFrame(this._renderRafHandle);
+                this._renderRafHandle = undefined;
             }
+        }
+
+        _render() {
+            if (this._renderRafHandle !== undefined) {
+                return;
+            }
+
+            this._renderRafHandle = requestAnimationFrame(() => {
+                try {
+                    currentStateStore = this._stateStore;
+                    const result = functionalComponent(this._props);
+                    litRender(result, this.shadowRoot);
+                } finally {
+                    currentStateStore = null;
+                    this._stateStore.firstRender = false;
+                    this._stateStore.counter = -1;
+                    this._renderRafHandle = undefined;
+                }
+            });
         }
     };
 
