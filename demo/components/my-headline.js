@@ -1,5 +1,5 @@
 import { html } from "/lib/lit-html/lit-html.js";
-import { makeWebComponent } from "/lib/functional-web-components.js";
+import { makeWebComponent } from "/lib/functional-web-components/index.js";
 
 function myHeadline({ level = "1" }) {
     if (level === "3") {

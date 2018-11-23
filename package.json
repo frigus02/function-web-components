@@ -1,14 +1,14 @@
 {
   "name": "functional-web-components",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Make Web Components functional",
-  "main": "index.js",
+  "main": "src/index.js",
   "license": "MIT",
   "devDependencies": {
     "browser-sync": "^2.26.3"
   },
   "scripts": {
-    "start": "browser-sync start -c bs-config.js"
+    "start": "browser-sync start -c browser-sync-config.js"
   },
   "dependencies": {
     "lit-html": "^0.13.0"
