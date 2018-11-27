@@ -1,15 +1,19 @@
 import { render as litRender } from "/lib/lit-html/lit-html.js";
 
-let currentStateStore = null;
+const currentStateStore = {
+    state: null,
+    onStateChange: null,
+    counter: -1
+};
 
 function useState(initialValue) {
-    if (currentStateStore === null) {
+    if (currentStateStore.state === null) {
         throw new Error("Cannot call useState outside of render.");
     }
 
     currentStateStore.counter++;
 
-    if (currentStateStore.firstRender) {
+    if (currentStateStore.state.length === currentStateStore.counter) {
         currentStateStore.state.push([
             initialValue,
             createStateSetter(
@@ -25,7 +29,7 @@ function useState(initialValue) {
 
 function createStateSetter(state, counter, onStateChange) {
     return function setState(value) {
-        if (currentStateStore !== null) {
+        if (currentStateStore.state !== null) {
             throw new Error("Cannot set state during render.");
         }
 
@@ -34,17 +38,31 @@ function createStateSetter(state, counter, onStateChange) {
     };
 }
 
+function callFunctionalComponent(
+    functionalComponent,
+    props,
+    state,
+    onStateChange
+) {
+    try {
+        currentStateStore.state = state;
+        currentStateStore.onStateChange = onStateChange;
+        currentStateStore.counter = -1;
+
+        return functionalComponent(props);
+    } finally {
+        currentStateStore.state = null;
+        currentStateStore.onStateChange = null;
+    }
+}
+
 function makeWebComponent(functionalComponent) {
     const webComponent = class extends HTMLElement {
         constructor() {
             super();
             this._props = {};
-            this._stateStore = {
-                firstRender: true,
-                counter: -1,
-                state: [],
-                onStateChange: this._render.bind(this)
-            };
+            this._state = [];
+            this._onStateChange = this._render.bind(this);
             this._renderRafHandle = undefined;
             this.attachShadow({ mode: "open" });
         }
@@ -66,16 +84,15 @@ function makeWebComponent(functionalComponent) {
             }
 
             this._renderRafHandle = requestAnimationFrame(() => {
-                try {
-                    currentStateStore = this._stateStore;
-                    const result = functionalComponent(this._props);
-                    litRender(result, this.shadowRoot);
-                } finally {
-                    currentStateStore = null;
-                    this._stateStore.firstRender = false;
-                    this._stateStore.counter = -1;
-                    this._renderRafHandle = undefined;
-                }
+                this._renderRafHandle = undefined;
+
+                const result = callFunctionalComponent(
+                    functionalComponent,
+                    this._props,
+                    this._state,
+                    this._onStateChange
+                );
+                litRender(result, this.shadowRoot);
             });
         }
     };
