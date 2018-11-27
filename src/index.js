@@ -63,42 +63,26 @@ function makeWebComponent(functionalComponent) {
             this._props = {};
             this._state = [];
             this._onStateChange = this._render.bind(this);
-            this._renderRafHandle = undefined;
         }
 
         connectedCallback() {
             this._render();
         }
 
-        disconnectedCallback() {
-            if (this._renderRafHandle !== undefined) {
-                cancelAnimationFrame(this._renderRafHandle);
-                this._renderRafHandle = undefined;
-            }
-        }
-
         _render() {
-            if (this._renderRafHandle !== undefined) {
-                return;
-            }
-
-            this._renderRafHandle = requestAnimationFrame(() => {
-                this._renderRafHandle = undefined;
-
-                const result = callFunctionalComponent(
-                    functionalComponent,
-                    this._props,
-                    this._state,
-                    this._onStateChange
-                );
-                if (result) {
-                    if (!this.shadowRoot) {
-                        this.attachShadow({ mode: "open" });
-                    }
-
-                    litRender(result, this.shadowRoot);
+            const result = callFunctionalComponent(
+                functionalComponent,
+                this._props,
+                this._state,
+                this._onStateChange
+            );
+            if (result) {
+                if (!this.shadowRoot) {
+                    this.attachShadow({ mode: "open" });
                 }
-            });
+
+                litRender(result, this.shadowRoot);
+            }
         }
     };
 
