@@ -64,7 +64,6 @@ function makeWebComponent(functionalComponent) {
             this._state = [];
             this._onStateChange = this._render.bind(this);
             this._renderRafHandle = undefined;
-            this.attachShadow({ mode: "open" });
         }
 
         connectedCallback() {
@@ -92,7 +91,13 @@ function makeWebComponent(functionalComponent) {
                     this._state,
                     this._onStateChange
                 );
-                litRender(result, this.shadowRoot);
+                if (result) {
+                    if (!this.shadowRoot) {
+                        this.attachShadow({ mode: "open" });
+                    }
+
+                    litRender(result, this.shadowRoot);
+                }
             });
         }
     };
