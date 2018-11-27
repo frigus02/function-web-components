@@ -3,7 +3,7 @@ import { render as litRender } from "/lib/lit-html/lit-html.js";
 const currentStateStore = {
     state: null,
     onStateChange: null,
-    counter: -1
+    counter: -1,
 };
 
 function useState(initialValue) {
@@ -20,7 +20,7 @@ function useState(initialValue) {
                 currentStateStore.state,
                 currentStateStore.counter,
                 currentStateStore.onStateChange
-            )
+            ),
         ]);
     }
 
@@ -89,7 +89,7 @@ function makeWebComponent(functionalComponent) {
     if (functionalComponent.hasOwnProperty("observedAttributes")) {
         Object.defineProperty(webComponent, "observedAttributes", {
             value: functionalComponent.observedAttributes,
-            enumerable: true
+            enumerable: true,
         });
 
         webComponent.prototype.attributeChangedCallback = function(
@@ -109,7 +109,7 @@ function makeWebComponent(functionalComponent) {
                 set: function(newValue) {
                     this.setAttribute("level", newValue);
                 },
-                enumerable: true
+                enumerable: true,
             });
         }
     }
