@@ -1,7 +1,7 @@
 {
   "name": "functional-web-components",
   "version": "0.0.1",
-  "description": "Make Web Components functional",
+  "description": "A library to write Web Components as a single function",
   "main": "src/index.js",
   "license": "MIT",
   "dependencies": {
