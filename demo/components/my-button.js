@@ -1,4 +1,4 @@
-import { html } from "/lib/lit-html/lit-html.js";
+import { html, render } from "/lib/lit-html/lit-html.js";
 import {
     makeWebComponent,
     useState,
@@ -30,4 +30,4 @@ function myButton() {
     `;
 }
 
-customElements.define("my-button", makeWebComponent(myButton));
+customElements.define("my-button", makeWebComponent(myButton, render));

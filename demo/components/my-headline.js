@@ -1,4 +1,4 @@
-import { html } from "/lib/lit-html/lit-html.js";
+import { html, render } from "/lib/lit-html/lit-html.js";
 import { makeWebComponent } from "/lib/functional-web-components/index.js";
 
 function myHeadline({ level = "1" }) {
@@ -19,4 +19,4 @@ function myHeadline({ level = "1" }) {
 
 myHeadline.observedAttributes = ["level"];
 
-customElements.define("my-headline", makeWebComponent(myHeadline));
+customElements.define("my-headline", makeWebComponent(myHeadline, render));

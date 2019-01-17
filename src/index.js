@@ -1,5 +1,3 @@
-import { render as litRender } from "/lib/lit-html/lit-html.js";
-
 const currentStateStore = {
     state: null,
     onStateChange: null,
@@ -56,7 +54,11 @@ function callFunctionalComponent(
     }
 }
 
-function makeWebComponent(functionalComponent) {
+function render(html, parentNode) {
+    parentNode.innerHTML = html;
+}
+
+function makeWebComponent(functionalComponent, render = render) {
     const webComponent = class extends HTMLElement {
         constructor() {
             super();
@@ -81,7 +83,7 @@ function makeWebComponent(functionalComponent) {
                     this.attachShadow({ mode: "open" });
                 }
 
-                litRender(result, this.shadowRoot);
+                render(result, this.shadowRoot);
             }
         }
     };
