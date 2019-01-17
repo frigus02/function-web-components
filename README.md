@@ -1,5 +1,7 @@
 # Function Web Components
 
+[![npm](https://img.shields.io/npm/v/function-web-components.svg)](https://www.npmjs.com/package/function-web-components)
+
 A library to write Web Components as a single function.
 
 Components written using this library look similar to [Function Components in React](https://reactjs.org/docs/components-and-props.html#function-and-class-components). You can specify props, which are mirrored as attributes and passed to the function. Internal state can saved using an API similar to [Hooks](https://reactjs.org/docs/hooks-intro.html). Your function is invoked every time props/attributes or state changes.

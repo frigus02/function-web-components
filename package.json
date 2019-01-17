@@ -1,9 +1,17 @@
 {
   "name": "function-web-components",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A library to write Web Components as a single function",
   "main": "src/index.js",
+  "author": "Jan Kuehle <jkuehle90@gmail.com>",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/frigus02/function-web-components.git"
+  },
+  "bugs": {
+    "url": "https://github.com/frigus02/function-web-components/issues"
+  },
   "dependencies": {},
   "devDependencies": {
     "browser-sync": "2.26.3",
