@@ -109,8 +109,8 @@ Provides a way for function components to store internal state. It must be calle
 -   Returns an array with two entries. The first is the current value, the second is a setter function for this piece of state. The setter must not be invoked syncronously in the `functionComponent` function. It should be called on user interaction or at least in a new microtask. Example:
 
     ```js
-    const fruit, setFruit = useState("Apple");
-    const amount, setAmount = useState(42);
+    const [fruit, setFruit] = useState("Apple");
+    const [amount, setAmount] = useState(42);
 
     setTimeout(() => {
         setAmount(amount - 1);
