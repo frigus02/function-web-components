@@ -14,14 +14,12 @@ Components written using this library look similar to [Function Components in Re
 
 ## Install
 
-The library is not published on npm, yet. However you can install it from GitHub:
-
-```
+```sh
 # npm
-npm install frigus02/function-web-components#master
+npm install function-web-components
 
 # yarn
-yarn add frigus02/function-web-components#master
+yarn add function-web-components
 ```
 
 ## Usage
