@@ -53,6 +53,15 @@ function renderRawHtml(html, parentNode) {
     parentNode.innerHTML = html;
 }
 
+function kebabToCamelCase(str) {
+    return str
+        .split("-")
+        .map((value, index) =>
+            index === 0 ? value : value[0].toUpperCase() + value.substr(1)
+        )
+        .join("");
+}
+
 function camelToKebabCase(str) {
     return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
 }
@@ -98,17 +107,17 @@ function makeWebComponent(functionComponent, render = renderRawHtml) {
             oldValue,
             newValue
         ) {
-            this._props[name] = newValue;
+            this._props[kebabToCamelCase(name)] = newValue;
             this._render();
         };
 
-        for (const attr of functionComponent.props) {
-            Object.defineProperty(webComponent.prototype, attr, {
+        for (const prop of functionComponent.props) {
+            Object.defineProperty(webComponent.prototype, prop, {
                 get: function() {
-                    return this._props[attr];
+                    return this._props[prop];
                 },
                 set: function(newValue) {
-                    this.setAttribute("level", newValue);
+                    this.setAttribute(camelToKebabCase(prop), newValue);
                 },
                 enumerable: true,
             });
