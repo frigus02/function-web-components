@@ -2,7 +2,7 @@ import { html, render } from "/lib/lit-html/lit-html.js";
 import {
     makeWebComponent,
     useState,
-} from "/lib/functional-web-components/index.js";
+} from "/lib/function-web-components/index.js";
 
 function myButton() {
     const [count, setCount] = useState(1);

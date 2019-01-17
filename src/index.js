@@ -36,29 +36,28 @@ function createStateSetter(state, counter, onStateChange) {
     };
 }
 
-function callFunctionalComponent(
-    functionalComponent,
-    props,
-    state,
-    onStateChange
-) {
+function callFunctionComponent(functionComponent, props, state, onStateChange) {
     try {
         currentStateStore.state = state;
         currentStateStore.onStateChange = onStateChange;
         currentStateStore.counter = -1;
 
-        return functionalComponent(props);
+        return functionComponent(props);
     } finally {
         currentStateStore.state = null;
         currentStateStore.onStateChange = null;
     }
 }
 
-function render(html, parentNode) {
+function renderRawHtml(html, parentNode) {
     parentNode.innerHTML = html;
 }
 
-function makeWebComponent(functionalComponent, render = render) {
+function camelToKebabCase(str) {
+    return str.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+}
+
+function makeWebComponent(functionComponent, render = renderRawHtml) {
     const webComponent = class extends HTMLElement {
         constructor() {
             super();
@@ -72,8 +71,8 @@ function makeWebComponent(functionalComponent, render = render) {
         }
 
         _render() {
-            const result = callFunctionalComponent(
-                functionalComponent,
+            const result = callFunctionComponent(
+                functionComponent,
                 this._props,
                 this._state,
                 this._onStateChange
@@ -88,9 +87,9 @@ function makeWebComponent(functionalComponent, render = render) {
         }
     };
 
-    if (functionalComponent.hasOwnProperty("observedAttributes")) {
+    if (functionComponent.hasOwnProperty("props")) {
         Object.defineProperty(webComponent, "observedAttributes", {
-            value: functionalComponent.observedAttributes,
+            value: functionComponent.props.map(camelToKebabCase),
             enumerable: true,
         });
 
@@ -103,7 +102,7 @@ function makeWebComponent(functionalComponent, render = render) {
             this._render();
         };
 
-        for (const attr of functionalComponent.observedAttributes) {
+        for (const attr of functionComponent.props) {
             Object.defineProperty(webComponent.prototype, attr, {
                 get: function() {
                     return this._props[attr];

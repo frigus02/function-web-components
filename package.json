@@ -1,5 +1,5 @@
 {
-  "name": "functional-web-components",
+  "name": "function-web-components",
   "version": "0.0.1",
   "description": "A library to write Web Components as a single function",
   "main": "src/index.js",

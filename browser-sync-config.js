@@ -7,7 +7,7 @@ module.exports = {
         baseDir: "demo",
         routes: {
             "/lib/lit-html/": "node_modules/lit-html/",
-            "/lib/functional-web-components/": "src/",
+            "/lib/function-web-components/": "src/",
         },
     },
     files: ["src/**/*", "demo/**/*"],

@@ -1,5 +1,5 @@
 import { html, render } from "/lib/lit-html/lit-html.js";
-import { makeWebComponent } from "/lib/functional-web-components/index.js";
+import { makeWebComponent } from "/lib/function-web-components/index.js";
 
 function myHeadline({ level = "1" }) {
     if (level === "3") {
@@ -17,6 +17,6 @@ function myHeadline({ level = "1" }) {
     }
 }
 
-myHeadline.observedAttributes = ["level"];
+myHeadline.props = ["level"];
 
 customElements.define("my-headline", makeWebComponent(myHeadline, render));
