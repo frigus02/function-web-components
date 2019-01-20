@@ -21,9 +21,7 @@ function myAdvancedGreeting({ givenName }) {
     `;
 }
 
-myAdvancedGreeting.props = ["givenName"];
-
 customElements.define(
     "my-advanced-greeting",
-    makeWebComponent(myAdvancedGreeting, render)
+    makeWebComponent(myAdvancedGreeting, { props: ["givenName"], render })
 );

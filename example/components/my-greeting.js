@@ -4,6 +4,7 @@ function myGreeting({ name = "You" }) {
     return `<p>Hello ${name}.</p>`;
 }
 
-myGreeting.props = ["name"];
-
-customElements.define("my-greeting", makeWebComponent(myGreeting));
+customElements.define(
+    "my-greeting",
+    makeWebComponent(myGreeting, { props: ["name"] })
+);

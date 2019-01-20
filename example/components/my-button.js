@@ -30,4 +30,4 @@ function myButton() {
     `;
 }
 
-customElements.define("my-button", makeWebComponent(myButton, render));
+customElements.define("my-button", makeWebComponent(myButton, { render }));

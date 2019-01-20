@@ -3,22 +3,23 @@
   "version": "0.0.4",
   "description": "A library to write Web Components as a single function",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Jan Kuehle <jkuehle90@gmail.com>",
   "license": "MIT",
   "repository": "github:frigus02/function-web-components",
   "dependencies": {},
   "devDependencies": {
     "browser-sync": "2.26.3",
+    "concurrently": "^4.1.0",
     "cross-var": "1.1.0",
     "lit-html": "1.0.0-rc.2",
-    "mkdirp": "0.5.1",
     "prettier": "1.15.3",
-    "terser": "3.14.1"
+    "typescript": "3.2.4"
   },
   "scripts": {
-    "start": "browser-sync start -c browser-sync-config.js",
-    "format": "prettier --write \"**/*.{css,html,js,json,md,yaml}\"",
-    "build": "yarn mkdirp dist && terser src/index.js -o dist/index.js",
-    "release": "yarn build && cross-var \"git commit -am v$npm_package_version\" && cross-var \"git tag v$npm_package_version\" && git push && git push --tags && npm publish"
+    "start": "yarn concurrently -n HTTP,TSC \"yarn browser-sync start -c browser-sync-config.js\" \"tsc --outDir dist --watch\"",
+    "format": "prettier --write \"**/*.{css,html,js,json,md,ts,yaml}\"",
+    "compile": "tsc --outDir dist && tsc -m umd --outDir dist/umd",
+    "release": "yarn compile && cross-var \"git commit -am v$npm_package_version\" && cross-var \"git tag v$npm_package_version\" && git push && git push --tags && npm publish"
   }
 }

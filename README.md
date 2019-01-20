@@ -35,9 +35,12 @@ function myGreeting({ name = "You" }) {
     return `<p>Hello ${name}.</p>`;
 }
 
-myGreeting.props = ["name"];
-
-customElements.define("my-greeting", makeWebComponent(myGreeting));
+customElements.define(
+    "my-greeting",
+    makeWebComponent(myGreeting, {
+        props: ["name"],
+    })
+);
 ```
 
 More advanced example using [lit-html](https://github.com/Polymer/lit-html) to render:
@@ -63,11 +66,12 @@ function myAdvancedGreeting({ givenName }) {
     `;
 }
 
-myAdvancedGreeting.props = ["givenName"];
-
 customElements.define(
     "my-advanced-greeting",
-    makeWebComponent(myAdvancedGreeting, render)
+    makeWebComponent(myAdvancedGreeting, {
+        props: ["givenName"],
+        render,
+    })
 );
 ```
 
@@ -80,21 +84,23 @@ Then use the elements as usual in your HTML:
 
 ## API
 
-### `makeWebComponent(functionComponent[, render])`
+### `makeWebComponent(functionComponent[, options])`
 
 Create a Custom Element.
 
 -   Arguments
 
-    -   `functionComponent` - The component function. It will be invoked with the props object as the first and only argument. All expected props need to be specified in a string array as a property `props` on the function object:
+    -   `functionComponent` - The component function. It will be invoked with the props object as the first and only argument. All expected props need to be specified in `options.props`.
+
+    -   `options.props` - String array of props used in the component. Example:
 
         ```js
-        functionComponent.props = ["a", "longPropName"];
+        makeWebComponent(myComp, { props: ["a", "longPropName"] });
         ```
 
-        Prop names written in camel case are converted to kebab case for attribute names. The example above makes the component listen for attributes `a` and `long-prop-name`.
+        Prop names written in camel case are converted to kebab case for attribute names. The example above makes the component listen for attributes `a` and `long-prop-name`
 
-    -   `render` - If specified this function will be invoked every time the components needs to be rendered to the DOM. It's invoked with the result of the functionComponent invocation and the first and the parent node as the second argument.
+    -   `options.render` - If specified this function will be invoked every time the components needs to be rendered to the DOM. It's invoked with the result of the functionComponent invocation and the first and the parent node as the second argument.
 
 -   Returns a class extending `HTMLElement`, which can be passed to `customElements.define`.
 

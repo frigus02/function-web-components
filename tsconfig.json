@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "es2015",
+        "declaration": true,
+        "strict": true
+    },
+    "files": ["src/index.ts"]
+}
