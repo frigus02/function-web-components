@@ -21,8 +21,9 @@ type FunctionWebComponent<T> = (props: Props) => T | undefined;
 type RenderCallback<T> = (html: T, parentNode: ShadowRoot) => void;
 
 type MakeWebComponentOptions<T> = {
-    render?: RenderCallback<T>;
+    attrs?: string[];
     props?: string[];
+    render?: RenderCallback<T>;
 };
 
 interface GeneratedCustomElement extends HTMLElement {
@@ -105,6 +106,30 @@ function kebabToCamelCase(str: string) {
         .join("");
 }
 
+function generatePropGetterSetters(
+    prototype: GeneratedCustomElement,
+    props: string[],
+    syncWithAttributes: boolean
+) {
+    for (const prop of props) {
+        const attrName = camelToKebabCase(prop);
+        Object.defineProperty(prototype, prop, {
+            get: function() {
+                return this._props[prop];
+            },
+            set: function(newValue) {
+                if (syncWithAttributes) {
+                    this.setAttribute(attrName, newValue);
+                } else {
+                    this._props[prop] = newValue;
+                    this._render();
+                }
+            },
+            enumerable: true,
+        });
+    }
+}
+
 export function makeWebComponent<T>(
     functionComponent: FunctionWebComponent<T>,
     options: MakeWebComponentOptions<T>
@@ -138,9 +163,9 @@ export function makeWebComponent<T>(
         }
     };
 
-    if (options.props) {
+    if (options.attrs) {
         Object.defineProperty(webComponent, "observedAttributes", {
-            value: options.props.map(camelToKebabCase),
+            value: options.attrs.map(camelToKebabCase),
             enumerable: true,
         });
 
@@ -153,17 +178,11 @@ export function makeWebComponent<T>(
             this._render();
         };
 
-        for (const prop of options.props) {
-            Object.defineProperty(webComponent.prototype, prop, {
-                get: function() {
-                    return this._props[prop];
-                },
-                set: function(newValue) {
-                    this.setAttribute(camelToKebabCase(prop), newValue);
-                },
-                enumerable: true,
-            });
-        }
+        generatePropGetterSetters(webComponent.prototype, options.attrs, true);
+    }
+
+    if (options.props) {
+        generatePropGetterSetters(webComponent.prototype, options.props, false);
     }
 
     return webComponent;

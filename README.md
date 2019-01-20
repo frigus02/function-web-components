@@ -4,7 +4,7 @@
 
 A library to write Web Components as a single function.
 
-Components written using this library look similar to [Function Components in React](https://reactjs.org/docs/components-and-props.html#function-and-class-components). You can specify props, which are mirrored as attributes and passed to the function. Internal state can saved using an API similar to [Hooks](https://reactjs.org/docs/hooks-intro.html). Your function is invoked every time props/attributes or state changes.
+Components written using this library look similar to [Function Components in React](https://reactjs.org/docs/components-and-props.html#function-and-class-components). You can specify attributes and props, which are both passed to the function. Internal state can saved using an API similar to [Hooks](https://reactjs.org/docs/hooks-intro.html). Your function is invoked every time props/attributes or state changes.
 
 ## Table of Contents
 
@@ -38,7 +38,7 @@ function myGreeting({ name = "You" }) {
 customElements.define(
     "my-greeting",
     makeWebComponent(myGreeting, {
-        props: ["name"],
+        attrs: ["name"],
     })
 );
 ```
@@ -69,7 +69,7 @@ function myAdvancedGreeting({ givenName }) {
 customElements.define(
     "my-advanced-greeting",
     makeWebComponent(myAdvancedGreeting, {
-        props: ["givenName"],
+        attrs: ["givenName"],
         render,
     })
 );
@@ -90,15 +90,21 @@ Create a Custom Element.
 
 -   Arguments
 
-    -   `functionComponent` - The component function. It will be invoked with the props object as the first and only argument. All expected props need to be specified in `options.props`.
+    -   `functionComponent` - The component function. It will be invoked with the props object as the first and only argument. Props need to be defined as either `options.attrs` or `options.props`.
 
-    -   `options.props` - String array of props used in the component. Example:
+    -   `options.attrs` - String array of attributes used in the component. For each attribute a corresponding property will be created. When either attribute or property are changed, the other will reflect that change, too. Attributes are bound to DOM restrictions and can only be strings. Example:
 
         ```js
-        makeWebComponent(myComp, { props: ["a", "longPropName"] });
+        makeWebComponent(myComp, { attrs: ["a", "longAttrName"] });
         ```
 
-        Prop names written in camel case are converted to kebab case for attribute names. The example above makes the component listen for attributes `a` and `long-prop-name`
+        Names written in camel case are converted to kebab case for attribute names. The example above makes the component listen for attributes `a` and `long-attr-name`
+
+    -   `options.props` - String array of props used in the component. Props are not reflected as attributes and can have any type. Example:
+
+        ```js
+        makeWebComponent(myComp, { props: ["b", "longPropName"] });
+        ```
 
     -   `options.render` - If specified this function will be invoked every time the components needs to be rendered to the DOM. It's invoked with the result of the functionComponent invocation and the first and the parent node as the second argument.
 

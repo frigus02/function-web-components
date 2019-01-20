@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 -   Add typings.
 -   **Breaking:** The list of props is now passed to `makeWebComponents` as the second argument instead of being a property on the function.
+-   Support props without attribute, which can be any type.
+-   **Breaking:** `props` are not mirrored to attributes anymore. Use `attrs` for this usecase, but note that these can only hold strings.
 
 ## [0.0.4]
 

@@ -6,5 +6,5 @@ function myGreeting({ name = "You" }) {
 
 customElements.define(
     "my-greeting",
-    makeWebComponent(myGreeting, { props: ["name"] })
+    makeWebComponent(myGreeting, { attrs: ["name"] })
 );

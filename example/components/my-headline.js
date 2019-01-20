@@ -19,5 +19,5 @@ function myHeadline({ level = "1" }) {
 
 customElements.define(
     "my-headline",
-    makeWebComponent(myHeadline, { props: ["level"], render })
+    makeWebComponent(myHeadline, { attrs: ["level"], render })
 );
