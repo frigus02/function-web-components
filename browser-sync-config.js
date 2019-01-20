@@ -4,11 +4,11 @@
 module.exports = {
     watch: true,
     server: {
-        baseDir: "demo",
+        baseDir: "example",
         routes: {
             "/lib/lit-html/": "node_modules/lit-html/",
             "/lib/function-web-components/": "src/",
         },
     },
-    files: ["src/**/*", "demo/**/*"],
+    files: ["src/**/*", "example/**/*"],
 };
