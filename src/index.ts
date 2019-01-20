@@ -16,6 +16,12 @@ type Props = {
     [key: string]: any;
 };
 
+type PropSetter = (newValue: any, options: PropSetterOptions) => void;
+
+type PropSetterOptions = {
+    eventName?: string;
+};
+
 type FunctionWebComponent<T> = (props: Props) => T | undefined;
 
 type RenderCallback<T> = (html: T, parentNode: ShadowRoot) => void;
@@ -130,6 +136,26 @@ function generatePropGetterSetters(
     }
 }
 
+function generateInternalPropertySetters(
+    instance: GeneratedCustomElement,
+    props: string[]
+) {
+    for (const prop of props) {
+        const setterName = `set${prop[0].toUpperCase()}${prop.substr(1)}`;
+        instance._props[setterName] = function(
+            newValue: any,
+            options: PropSetterOptions
+        ) {
+            instance._props[prop] = newValue;
+            if (options.eventName) {
+                instance.dispatchEvent(
+                    new CustomEvent(options.eventName, { detail: newValue })
+                );
+            }
+        };
+    }
+}
+
 export function makeWebComponent<T>(
     functionComponent: FunctionWebComponent<T>,
     options: MakeWebComponentOptions<T>
@@ -139,6 +165,18 @@ export function makeWebComponent<T>(
         _props = {};
         _state = [];
         _onStateChange = this._render.bind(this);
+
+        constructor() {
+            super();
+
+            if (options.attrs) {
+                generateInternalPropertySetters(this, options.attrs);
+            }
+
+            if (options.props) {
+                generateInternalPropertySetters(this, options.props);
+            }
+        }
 
         connectedCallback() {
             this._render();

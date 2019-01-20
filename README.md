@@ -90,7 +90,9 @@ Create a Custom Element.
 
 -   Arguments
 
-    -   `functionComponent` - The component function. It will be invoked with the props object as the first and only argument. Props need to be defined as either `options.attrs` or `options.props`.
+    -   `functionComponent` - The component function. It will be called with props as the first argument. Props is an object with properties for all defined `attrs` and `props`.
+
+        In addition to the values, there is a setter function for every value called `set[PropertyName]` (e.g. for the property `value`, the function is called `setValue`). These setters take the new value as the first argument. If called with `{ eventName: "xx" }` as the second argument, they dispatch a custom event with the specified name and the new value as the detail.
 
     -   `options.attrs` - String array of attributes used in the component. For each attribute a corresponding property will be created. When either attribute or property are changed, the other will reflect that change, too. Attributes are bound to DOM restrictions and can only be strings. Example:
 
