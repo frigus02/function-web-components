@@ -2,9 +2,14 @@
 
 [![npm](https://img.shields.io/npm/v/function-web-components.svg)](https://www.npmjs.com/package/function-web-components)
 
-A library to write Web Components as a single function.
+Write [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) as a single function.
 
-Components written using this library look similar to [Function Components in React](https://reactjs.org/docs/components-and-props.html#function-and-class-components). You can specify attributes and props, which are both passed to the function. Internal state can saved using an API similar to [Hooks](https://reactjs.org/docs/hooks-intro.html). Your function is invoked every time props/attributes or state changes.
+Components written using this library look similar to [Function Components in React](https://reactjs.org/docs/components-and-props.html#function-and-class-components):
+
+-   You declare attributes and properties for your Custom Element. Both are passed to the function as the first argument.
+-   Internal state can saved using `useState`; similar to [Hooks](https://reactjs.org/docs/hooks-intro.html).
+-   Your function is invoked every time attributes/properties or state changes.
+-   The function should return HTML, which is then rendered to the elements Shadow DOM (rendering can be overridden to use libraries like [lit-html](https://github.com/Polymer/lit-html)).
 
 ## Table of Contents
 
@@ -26,7 +31,7 @@ yarn add function-web-components
 
 ## Usage
 
-Very simple example:
+Simple example:
 
 ```js
 import { makeWebComponent } from "function-web-components";
@@ -43,93 +48,119 @@ customElements.define(
 );
 ```
 
-More advanced example using [lit-html](https://github.com/Polymer/lit-html) to render:
+```html
+<my-greeting name="Jan"></my-greeting>
+```
+
+Advanced example showing properties, state and using [lit-html](https://github.com/Polymer/lit-html):
 
 ```js
 import { makeWebComponent, useState } from "function-web-components";
 import { html, render } from "lit-html";
 
-function myAdvancedGreeting({ givenName }) {
-    const [surname, setSurname] = useState("...");
-    const askForSurname = () => {
-        const response = prompt("Enter surname:");
-        if (response) {
-            setSurname(response);
-        }
+function myTodo({ todo }) {
+    const [done, setDone] = useState(false);
+    const toggleDone = () => {
+        setDone(!done);
     };
 
     return html`
-        <p>
-            Hello ${givenName} ${surname}.
-            <button @click=${askForSurname}>Change surname</button>
-        </p>
+        <div class="${done ? "done" : "todo"}">
+            <h3>${todo.title}</h3>
+            <p>${todo.description}</p>
+            <button @click=${toggleDone}>Toggle</button>
+        </div>
     `;
 }
 
 customElements.define(
-    "my-advanced-greeting",
-    makeWebComponent(myAdvancedGreeting, {
-        attrs: ["givenName"],
+    "my-todo",
+    makeWebComponent(myTodo, {
+        props: ["todo"],
         render,
     })
 );
 ```
 
-Then use the elements as usual in your HTML:
-
-```html
-<my-greeting name="Jan"></my-greeting>
-<my-advanced-greeting given-name="Jan"></my-advanced-greeting>
+```js
+const element = document.createElement("my-todo");
+element.todo = {
+    title: "Buy apples",
+    description: "I really need that.",
+};
+document.body.appendChild(element);
 ```
 
 ## API
 
 ### `makeWebComponent(functionComponent[, options])`
 
-Create a Custom Element.
+Creates a Custom Element (a class extending `HTMLElement`), which can be passed to [`customElements.define()`](https://developer.mozilla.org/en-US/docs/Web/API/CustomElementRegistry/define).
 
--   Arguments
+#### Arguments
 
-    -   `functionComponent` - The component function. It will be called with props as the first argument. Props is an object with properties for all defined `attrs` and `props`.
+-   `functionComponent` - The component function.
 
-        In addition to the values, there is a setter function for every value called `set[PropertyName]` (e.g. for the property `value`, the function is called `setValue`). These setters take the new value as the first argument. If called with `{ eventName: "xx" }` as the second argument, they dispatch a custom event with the specified name and the new value as the detail.
+    It receives one argument: `props`. This is an object containing the values of all declared attributes and properties (see `options.attrs` and `options.props`).
 
-    -   `options.attrs` - String array of attributes used in the component. For each attribute a corresponding property will be created. When either attribute or property are changed, the other will reflect that change, too. Attributes are bound to DOM restrictions and can only be strings. Example:
+    In addition the object contains a setter function for each value called `set<PropertyName>`. For example the property `givenName` would have the setter function `setGivenName`.
 
-        ```js
-        makeWebComponent(myComp, { attrs: ["a", "longAttrName"] });
-        ```
+-   `options.attrs` - String array of attributes used in the component. For each attribute a corresponding property is created. When either attribute or property are changed, the other will reflect that change. Attributes are bound to DOM restrictions and can only be strings. Example:
 
-        Names written in camel case are converted to kebab case for attribute names. The example above makes the component listen for attributes `a` and `long-attr-name`
+    ```js
+    makeWebComponent(myComp, { attrs: ["age", "givenName"] });
+    ```
 
-    -   `options.props` - String array of props used in the component. Props are not reflected as attributes and can have any type. Example:
+    Names written in camel case are converted to kebab case for attribute names. The example above makes the component listen for attributes `age` and `given-name`.
 
-        ```js
-        makeWebComponent(myComp, { props: ["b", "longPropName"] });
-        ```
+-   `options.props` - String array of properties used in the component. Properties are not reflected as attributes and can have any type. Example:
 
-    -   `options.render` - If specified this function will be invoked every time the components needs to be rendered to the DOM. It's invoked with the result of the functionComponent invocation and the first and the parent node as the second argument.
+    ```js
+    makeWebComponent(myComp, { props: ["userObject"] });
+    ```
 
--   Returns a class extending `HTMLElement`, which can be passed to `customElements.define`.
+-   `options.render` - If specified this function will be invoked every time the components needs to be rendered to the DOM. It's invoked with the result of the functionComponent invocation and the first and the parent node as the second argument. Example:
+
+    ```js
+    function renderInnerHTML(html, parentNode) {
+        parentNode.innerHTML = html;
+    }
+    ```
 
 ### `useState([initialValue])`
 
-Provides a way for function components to store internal state. It must be called syncronously in the `functionComponent` function. Similar to React Hooks it can be called multiple times and must not be called conditionally.
+Provides a way for function components to store internal state. Returns an array with two entries. The first is the current value, the second is a setter function for this piece of state. You can call this function multiple times, if you want to store multiple pieces of state.
 
--   Arguments
+#### Constraints
 
-    -   `initialValue` - The initial value for this piece of state.
+-   It must be called syncronously in the `functionComponent` function.
+-   It must not be called conditionally.
+-   The setter must not be invoked syncronously in the `functionComponent` function. It should be called on user interaction or at least in a new microtask. This is because setting state triggers another render.
 
--   Returns an array with two entries. The first is the current value, the second is a setter function for this piece of state. The setter must not be invoked syncronously in the `functionComponent` function. It should be called on user interaction or at least in a new microtask. Example:
+#### Arguments
 
-    ```js
-    const [fruit, setFruit] = useState("Apple");
-    const [amount, setAmount] = useState(42);
+-   `initialValue` - The initial value for this piece of state.
 
-    setTimeout(() => {
-        setAmount(amount - 1);
-    }, 5000);
-    ```
+#### Example
+
+```js
+const [fruit, setFruit] = useState("Apple");
+const [amount, setAmount] = useState(42);
+
+setTimeout(() => {
+    setAmount(amount - 1);
+}, 5000);
+```
+
+### `props.set<PropertyName>(newValue[, options])`
+
+For every declared attribute or property a function component gets passed a corresponding setter function. For example the property `givenName` would have the setter function `setGivenName`. This sets the attribute/property to a new value and can optionally dispatch a change event. It does not trigger a render.
+
+#### Arguments
+
+-   `newValue` - The new value for this attribute or property.
+
+-   `options.eventName` - If specified, the function dispatches a custom event with name. The new value is used as the [`detail`](https://developer.mozilla.org/en-US/docs/Web/API/CustomEvent/detail).
 
 ## Contributing
 
