@@ -16,7 +16,12 @@ function run(command, args) {
     const proc = exec(`${command} ${args.join(" ")}`, {
         env: process.env,
     });
-    process.stdin.pipe(proc.stdin);
+
+    const listener = chunk => {
+        proc.stdin.write(chunk);
+    };
+    process.stdin.on("data", listener);
+
     proc.stdout.pipe(process.stdout);
     proc.stderr.pipe(process.stderr);
 
@@ -26,11 +31,11 @@ function run(command, args) {
         });
 
         proc.on("close", code => {
-            process.stdin.unpipe(proc.stdin);
+            process.stdin.off("data", listener);
             if (code === 0) {
                 resolve();
             } else {
-                reject(`Process exited with code ${code}`);
+                reject(`Command exited with code ${code}`);
             }
         });
     });
