@@ -10,8 +10,7 @@
   "dependencies": {},
   "devDependencies": {
     "browser-sync": "2.26.3",
-    "concurrently": "^4.1.0",
-    "cross-var": "1.1.0",
+    "concurrently": "4.1.0",
     "lit-html": "1.0.0-rc.2",
     "prettier": "1.16.0",
     "typescript": "3.2.4"
@@ -20,6 +19,6 @@
     "start": "yarn concurrently -n HTTP,TSC \"yarn browser-sync start -c browser-sync-config.js\" \"tsc --outDir dist --watch\"",
     "format": "prettier --write \"**/*.{css,html,js,json,md,ts,yaml}\"",
     "compile": "tsc --outDir dist && tsc -m umd --outDir dist/umd",
-    "release": "yarn compile && cross-var \"git commit -am v$npm_package_version\" && cross-var \"git tag v$npm_package_version\" && git push && git push --tags && npm publish"
+    "release": "node ./scripts/release.js"
   }
 }
