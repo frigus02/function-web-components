@@ -6,8 +6,9 @@ module.exports = {
     server: {
         baseDir: "example",
         routes: {
-            "/lib/lit-html/": "node_modules/lit-html/",
             "/lib/function-web-components/": "dist/",
+            "/lib/lighterhtml/": "node_modules/lighterhtml/",
+            "/lib/lit-html/": "node_modules/lit-html/",
         },
     },
     files: ["src/**/*", "example/**/*"],

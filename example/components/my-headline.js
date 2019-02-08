@@ -1,5 +1,6 @@
-import { html, render } from "/lib/lit-html/lit-html.js";
 import { makeWebComponent } from "/lib/function-web-components/index.js";
+
+const { html, render } = lighterhtml;
 
 function myHeadline({ level = "1" }) {
     if (level === "3") {
@@ -19,5 +20,8 @@ function myHeadline({ level = "1" }) {
 
 customElements.define(
     "my-headline",
-    makeWebComponent(myHeadline, { attrs: ["level"], render })
+    makeWebComponent(myHeadline, {
+        attrs: ["level"],
+        render: (html, parentNode) => render(parentNode, () => html),
+    })
 );
