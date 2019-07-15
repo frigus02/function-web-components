@@ -11,6 +11,8 @@ Components written using this library look similar to [Function Components in Re
 -   Your function is invoked every time attributes/properties or state changes.
 -   The function should return HTML, which is then rendered to the elements Shadow DOM (rendering can be overridden to use libraries like [lit-html](https://github.com/Polymer/lit-html)).
 
+📣 Check out [haunted](https://github.com/matthewp/haunted) for a more mature library, which does the same! 📣
+
 ## Table of Contents
 
 -   [Install](#install)
